@@ -249,7 +249,7 @@ public class QualityDamageTooltipsClientMod implements WurmMod, Initable
         }
         catch (NotFoundException e)
         {
-            logException("Failed to create hooks for QualityDamageTooltipsClientMod", e);
+            logException("Failed to create hooks for "  + QualityDamageTooltipsClientMod.class.getName(), e);
             throw new HookException(e);
         }
     }

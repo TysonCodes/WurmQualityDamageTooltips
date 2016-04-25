@@ -4,16 +4,15 @@ package org.tmarchuk.wurmunlimited.server.tooltips;
  * Created by Tyson Marchuk on 2016-04-02.
  */
 
+// Mod helpers
+import org.tmarchuk.wurmunlimited.server.tooltips.QualityDamageTooltipsServerHelper;
+
 // From Wurm Unlimited Dedicated Server
 import com.wurmonline.server.Items;
-import com.wurmonline.server.Message;
 import com.wurmonline.server.creatures.Communicator;
 import com.wurmonline.server.items.DbItem;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.structures.*;
-import com.wurmonline.server.zones.VirtualZone;
-import com.wurmonline.server.zones.VolaTile;
-import com.wurmonline.server.zones.Zones;
 
 // From Ago's modloader
 import org.gotti.wurmunlimited.modloader.classhooks.HookException;
@@ -29,7 +28,6 @@ import javassist.bytecode.Descriptor;
 import javassist.NotFoundException;
 
 // Base Java
-import java.util.ArrayList;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -86,7 +84,7 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         long id = theWall.getId();
 
                                         // Send a chat message with the quality/damage.
-                                        sendStructureQualityAndDamage(comm, id, theWall.getQualityLevel(), theWall.getDamage());
+                                        QualityDamageTooltipsServerHelper.sendStructureQualityAndDamage(comm, id, theWall.getQualityLevel(), theWall.getDamage());
 
                                         return result;
                                     }
@@ -121,7 +119,7 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         long id = theFence.getId();
 
                                         // Send a chat message with the quality/damage.
-                                        sendStructureQualityAndDamage(comm, id, theFence.getQualityLevel(), theFence.getDamage());
+                                        QualityDamageTooltipsServerHelper.sendStructureQualityAndDamage(comm, id, theFence.getQualityLevel(), theFence.getDamage());
 
                                         return result;
                                     }
@@ -157,7 +155,7 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         long id = theFloor.getId();
 
                                         // Send a chat message with the quality/damage.
-                                        sendStructureQualityAndDamage(comm, id, theFloor.getQualityLevel(), theFloor.getDamage());
+                                        QualityDamageTooltipsServerHelper.sendStructureQualityAndDamage(comm, id, theFloor.getQualityLevel(), theFloor.getDamage());
 
                                         return result;
                                     }
@@ -193,7 +191,7 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         long id = theBridgePart.getId();
 
                                         // Send a chat message with the quality/damage.
-                                        sendStructureQualityAndDamage(comm, id, theBridgePart.getQualityLevel(), theBridgePart.getDamage());
+                                        QualityDamageTooltipsServerHelper.sendStructureQualityAndDamage(comm, id, theBridgePart.getQualityLevel(), theBridgePart.getDamage());
 
                                         return result;
                                     }
@@ -233,10 +231,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newQuality != originalQuality)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(bridgePart.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(bridgePart.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureQuality(comm, id, newQuality);
+                                            	QualityDamageTooltipsServerHelper.sendStructureQuality(comm, id, newQuality);
                                             }
                                         }
                                         return result;
@@ -275,10 +273,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newQuality != originalQuality)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(fence.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(fence.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureQuality(comm, id, newQuality);
+                                            	QualityDamageTooltipsServerHelper.sendStructureQuality(comm, id, newQuality);
                                             }
                                         }
                                         return result;
@@ -317,10 +315,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newQuality != originalQuality)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(floor.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(floor.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureQuality(comm, id, newQuality);
+                                            	QualityDamageTooltipsServerHelper.sendStructureQuality(comm, id, newQuality);
                                             }
                                         }
                                         return result;
@@ -359,10 +357,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newQuality != originalQuality)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(wall.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(wall.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureQuality(comm, id, newQuality);
+                                            	QualityDamageTooltipsServerHelper.sendStructureQuality(comm, id, newQuality);
                                             }
                                         }
                                         return result;
@@ -402,10 +400,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newDamage != originalDamage)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(bridgePart.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(bridgePart.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureDamage(comm, id, newDamage);
+                                            	QualityDamageTooltipsServerHelper.sendStructureDamage(comm, id, newDamage);
                                             }
                                         }
                                         return result;
@@ -444,10 +442,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newDamage != originalDamage)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(fence.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(fence.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureDamage(comm, id, newDamage);
+                                            	QualityDamageTooltipsServerHelper.sendStructureDamage(comm, id, newDamage);
                                             }
                                         }
                                         return result;
@@ -486,10 +484,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newDamage != originalDamage)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(floor.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(floor.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureDamage(comm, id, newDamage);
+                                            	QualityDamageTooltipsServerHelper.sendStructureDamage(comm, id, newDamage);
                                             }
                                         }
                                         return result;
@@ -528,10 +526,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newDamage != originalDamage)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(wall.getTile());
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(wall.getTile());
                                             for (Communicator comm : comms)
                                             {
-                                                sendStructureDamage(comm, id, newDamage);
+                                            	QualityDamageTooltipsServerHelper.sendStructureDamage(comm, id, newDamage);
                                             }
                                         }
                                         return result;
@@ -577,10 +575,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newQuality != originalQuality)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(getTileIfGroundItem(item));
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(QualityDamageTooltipsServerHelper.getTileIfGroundItem(item));
                                             for (Communicator comm : comms)
                                             {
-                                                sendItemQuality(comm, id, newQuality);
+                                            	QualityDamageTooltipsServerHelper.sendItemQuality(comm, id, newQuality);
                                             }
                                         }
                                         return result;
@@ -619,10 +617,10 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                         if (newDamage != originalDamage)
                                         {
                                             // Get a list of watchers.
-                                            Communicator[] comms = getValidRecipients(getTileIfGroundItem(item));
+                                            Communicator[] comms = QualityDamageTooltipsServerHelper.getValidRecipients(QualityDamageTooltipsServerHelper.getTileIfGroundItem(item));
                                             for (Communicator comm : comms)
                                             {
-                                                sendItemDamage(comm, id, newDamage);
+                                            	QualityDamageTooltipsServerHelper.sendItemDamage(comm, id, newDamage);
                                             }
                                         }
                                         return result;
@@ -666,8 +664,8 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                                             // 'item' channels because this is a WurmId so it won't collide with other
                                             // item Wurm IDs. It's also an item even though it's a creature...
                                             Item theItem = Items.getItem(id);
-                                            sendItemQuality(comm, id, theItem.getQualityLevel());
-                                            sendItemDamage(comm, id, theItem.getDamage());
+                                            QualityDamageTooltipsServerHelper.sendItemQuality(comm, id, theItem.getQualityLevel());
+                                            QualityDamageTooltipsServerHelper.sendItemDamage(comm, id, theItem.getDamage());
                                         }
                                     }
 
@@ -684,73 +682,5 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
             logException("Failed to create hooks for " + QualityDamageTooltipsServerMod.class.getName(), e);
             throw new HookException(e);
         }
-    }
-
-    // Send quality and damage of a structure to client in hidden chat tab.
-    private void sendStructureQualityAndDamage(Communicator comm, long id, float quality, float damage)
-    {
-        sendData(comm, id, quality, STRUCTURE_QUALITY_WINDOW_TITLE);
-        sendData(comm, id, damage, STRUCTURE_DAMAGE_WINDOW_TITLE);
-    }
-
-    // Send quality of a structure to client in hidden chat tab.
-    private void sendStructureQuality(Communicator comm, long id, float quality)
-    {
-        sendData(comm, id, quality, STRUCTURE_QUALITY_WINDOW_TITLE);
-    }
-
-    // Send damage of a structure to client in hidden chat tab.
-    private void sendStructureDamage(Communicator comm, long id, float damage)
-    {
-        sendData(comm, id, damage, STRUCTURE_DAMAGE_WINDOW_TITLE);
-    }
-
-    // Send quality of an item to client in hidden chat tab.
-    private void sendItemQuality(Communicator comm, long id, float quality)
-    {
-        sendData(comm, id, quality, ITEM_QUALITY_WINDOW_TITLE);
-    }
-
-    // Send damage of an item to client in hidden chat tab.
-    private void sendItemDamage(Communicator comm, long id, float damage)
-    {
-        sendData(comm, id, damage, ITEM_DAMAGE_WINDOW_TITLE);
-    }
-
-    // Send data about an item or structure to a private chat channel.
-    private void sendData(Communicator comm, long id, float value, String window)
-    {
-        Message theMsg = new Message(comm.getPlayer(), (byte) 10, window, id + ":" + value);
-        comm.sendMessage(theMsg);
-    }
-
-    private Communicator[] getValidRecipients(VolaTile tile)
-    {
-        ArrayList<Communicator> result = new ArrayList<>();
-        if (tile != null)
-        {
-            VirtualZone[] watchers = tile.getWatchers();
-            for (VirtualZone curWatcher : watchers)
-            {
-                // For each watcher that is a player, get the communicator.
-                if (curWatcher.getWatcher().isPlayer() && curWatcher.getWatcher().hasLink())
-                {
-                    result.add(curWatcher.getWatcher().getCommunicator());
-                }
-            }
-        }
-        return (Communicator[]) result.toArray(new Communicator[result.size()]);
-    }
-
-    private VolaTile getTileIfGroundItem(DbItem item)
-    {
-        VolaTile result = null;
-
-        // Ground tiles have no parent but do have a valid zoneId.
-        if((item.zoneId != -10L) && (item.getParentId() == -10L))
-        {
-            result = Zones.getTileOrNull(item.getTileX(), item.getTileY(), item.isOnSurface());
-        }
-        return result;
     }
 }
