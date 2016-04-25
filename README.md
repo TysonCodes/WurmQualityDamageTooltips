@@ -1,26 +1,26 @@
 # Quality Damage Tooltips for Wurm Unlimited
 
 ## Requirements
-Requires [Ago1024's client modloader](https://github.com/ago1024/WurmClientModLauncher/releases/latest) on the client.
-Requires [Ago1024's server modloader](https://github.com/ago1024/WurmServerModLauncher/releases/latest) on the server.
-Requires installation on both the client (to change the tooltip rendering) and on the server 
+* Requires [Ago1024's client modloader](https://github.com/ago1024/WurmClientModLauncher/releases/latest) on the client.
+* Requires [Ago1024's server modloader](https://github.com/ago1024/WurmServerModLauncher/releases/latest) on the server.
+* Requires installation on both the client (to change the tooltip rendering) and on the server 
 (to send quality and damage updates without having to 'examine' the object.)
 
 ## Installation
 * Client Installation
-** Download QualityDamageTooltipsClient.zip
-** Extract QualityDamageTooltipsClient.zip into wurm unlimited client folder 
+  * Download QualityDamageTooltipsClient.zip
+  * Extract QualityDamageTooltipsClient.zip into wurm unlimited client folder 
 (for example, C:/Program Files/SteamLibrary/SteamApps/common/Wurm Unlimited/WurmLauncher). 
 The QualityDamageTooltipsClient.jar file should end up in 
 mods/QualityDamageTooltipsClient/QualityDamageTooltipsClient.jar.
 * Server Installation
-** Download QualityDamageTooltipsServer.zip
-** Extract QualityDamageTooltipsServer.zip into wurm unlimited dedicated server folder 
+  * Download QualityDamageTooltipsServer.zip
+  * Extract QualityDamageTooltipsServer.zip into wurm unlimited dedicated server folder 
 (for example, C:/Program Files/SteamLibrary/SteamApps/common/Wurm Unlimited Dedicated Server). 
 The QualityDamageTooltipsServer.jar file should end up in 
 mods/QualityDamageTooltipsServer/QualityDamageTooltipsServer.jar.
 * Startup
-** Start the Wurm Dedicated Server and Wurm Client and enjoy!
+  * Start the Wurm Dedicated Server and Wurm Client and enjoy!
 
 ## Effects
 * Mousing over a structure such as a fence, wall, etc. or a dropped item (including forges, carts, rafts, etc.) will 
