@@ -179,7 +179,7 @@ public class QualityDamageTooltipsClientMod implements WurmMod, Initable
                                                 // Store these in the hashes.
                                                 itemQuality_.put(itemId, quality);
                                                 itemDamage_.put(itemId, damage);
-                                                logger_.log(Level.INFO, "Added an item. Name:'" + lName + "', Item ID:" + itemId + ", quality:" + quality + ", damage:" + damage);
+                                                logger_.log(Level.FINER, "Added an item. Name:'" + lName + "', Item ID:" + itemId + ", quality:" + quality + ", damage:" + damage);
                                             }
                                         }
 
