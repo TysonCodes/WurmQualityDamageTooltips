@@ -10,6 +10,9 @@ import com.wurmonline.client.game.World;
 import com.wurmonline.client.renderer.PickableUnit;
 
 // From Ago's modloader
+import org.gotti.wurmunlimited.modcomm.Channel;
+import org.gotti.wurmunlimited.modcomm.IChannelListener;
+import org.gotti.wurmunlimited.modcomm.ModComm;
 import org.gotti.wurmunlimited.modloader.classhooks.HookException;
 import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
 import org.gotti.wurmunlimited.modloader.classhooks.InvocationHandlerFactory;
@@ -48,10 +51,12 @@ public class QualityDamageTooltipsClientMod implements WurmMod, Initable
     private HashMap<Long, Float> itemDamage_ = new HashMap<>();
     private HashMap<Long, Float> invalidHash_ = new HashMap<>();
 
-    private static final String STRUCTURE_QUALITY_WINDOW_TITLE = ":mod:structure_quality_info";
-    private static final String STRUCTURE_DAMAGE_WINDOW_TITLE = ":mod:structure_damage_info";
-    private static final String ITEM_QUALITY_WINDOW_TITLE = ":mod:item_quality_info";
-    private static final String ITEM_DAMAGE_WINDOW_TITLE = ":mod:item_damage_info";
+    private static final byte TYPE_STRUCTURE_QUALITY = 1;
+    private static final byte TYPE_STRUCTURE_DAMAGE = 2;
+    private static final byte TYPE_ITEM_QUALITY = 3;
+    private static final byte TYPE_ITEM_DAMAGE = 4;
+
+    private static Channel channel;
 
     private World theWorld_ = null;
     private static final byte[] stringByteArray = new byte['\uffff'];
@@ -61,77 +66,34 @@ public class QualityDamageTooltipsClientMod implements WurmMod, Initable
     {
         try
         {
-            // Handle added server communications to send structure quality and damage via chat message to hidden
-            // chat tab.
+            // Handle server communications to send structure quality and damage via mod channel
+            channel = ModComm.registerChannel("tmarchuk.tooltips", new IChannelListener() {
+                @Override
+                public void handleMessage(ByteBuffer message) {
+                    byte type = message.get();
+                    long id = message.getLong();
+                    float value = message.getFloat();
+                    switch (type) {
+                        case TYPE_STRUCTURE_QUALITY:
+                            structureQuality_.put(id, value);
+                            break;
+                        case TYPE_STRUCTURE_DAMAGE:
+                            structureDamage_.put(id, value);
+                            break;
+                        case TYPE_ITEM_QUALITY:
+                            itemQuality_.put(id, value);
+                            break;
+                        case TYPE_ITEM_DAMAGE:
+                            itemDamage_.put(id, value);
+                            break;
+                        default:
+                            logger_.warning("Unknown data type from server: " + type);
+                    }
+                }
+            });
 
-            // com.wurmonline.client.comm.ServerConnectionListenerClass.textMessage(String title, float r, float g, float b, String message, byte onScreenType)
             ClassPool classPool = HookManager.getInstance().getClassPool();
             String descriptor;
-            descriptor = Descriptor.ofMethod(CtClass.voidType, new CtClass[] {classPool.get("java.lang.String"),
-                    CtClass.floatType, CtClass.floatType, CtClass.floatType, classPool.get("java.lang.String"),
-                    CtClass.byteType});
-
-            HookManager.getInstance().registerHook(
-                    "com.wurmonline.client.comm.ServerConnectionListenerClass", "textMessage", descriptor,
-                    new InvocationHandlerFactory()
-                    {
-                        @Override
-                        public InvocationHandler createInvocationHandler()
-                        {
-                            return new InvocationHandler()
-                            {
-                                @Override
-                                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-                                {
-                                    synchronized (proxy)
-                                    {
-                                        String windowTitle = args[0].toString();
-                                        String message = args[4].toString();
-                                        boolean messageForMod = false;
-                                        HashMap<Long, Float> hashToSet = invalidHash_;
-                                        if (windowTitle.equals(STRUCTURE_QUALITY_WINDOW_TITLE))
-                                        {
-                                            hashToSet = structureQuality_;
-                                            messageForMod = true;
-                                        }
-                                        else if (windowTitle.equals(STRUCTURE_DAMAGE_WINDOW_TITLE))
-                                        {
-                                            hashToSet = structureDamage_;
-                                            messageForMod = true;
-                                        }
-                                        else if (windowTitle.equals(ITEM_QUALITY_WINDOW_TITLE))
-                                        {
-                                            hashToSet = itemQuality_;
-                                            messageForMod = true;
-                                        }
-                                        else if (windowTitle.equals(ITEM_DAMAGE_WINDOW_TITLE))
-                                        {
-                                            hashToSet = itemDamage_;
-                                            messageForMod = true;
-                                        }
-
-                                        if(messageForMod)
-                                        {
-                                            // Add tooltip info to the hashes.
-                                            String[] parameters = message.split(":", 2);
-                                            if (parameters.length == 2)
-                                            {
-                                                Long id = Long.valueOf(parameters[0]);
-                                                Float value = Float.valueOf(parameters[1]);
-                                                hashToSet.put(id, value);
-                                            }
-                                            return null;
-                                        }
-                                        else
-                                        {
-                                            return method.invoke(proxy, args);
-                                        }
-                                    }
-                                }
-                            };
-                        }
-                    });
-            // END - com.wurmonline.client.comm.ServerConnectionListenerClass.textMessage(String title, float r, float g, float b, String message, byte onScreenType)
 
             // Handle items being added. The quality is sent but for some reason ignored.
             // com.wurmonline.client.comm.SimpleServerConnectionClass.receiveItemOrCorpse(long creatureDeadId, ByteBuffer bb)

@@ -5,6 +5,7 @@ package org.tmarchuk.wurmunlimited.server.tooltips;
  */
 
 // Mod helpers
+import javassist.CannotCompileException;
 import org.tmarchuk.wurmunlimited.server.tooltips.QualityDamageTooltipsServerHelper;
 
 // From Wurm Unlimited Dedicated Server
@@ -43,16 +44,13 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
             logger_.log(Level.SEVERE, msg, e);
     }
 
-    private static final String STRUCTURE_QUALITY_WINDOW_TITLE = ":mod:structure_quality_info";
-    private static final String STRUCTURE_DAMAGE_WINDOW_TITLE = ":mod:structure_damage_info";
-    private static final String ITEM_QUALITY_WINDOW_TITLE = ":mod:item_quality_info";
-    private static final String ITEM_DAMAGE_WINDOW_TITLE = ":mod:item_damage_info";
-
     @Override
     public void init()
     {
         try
         {
+            QualityDamageTooltipsServerHelper.setupChannel();
+
             // Send structure quality and damage via chat message to hidden chat tab when added.
             // =================================================================================
 
@@ -676,8 +674,16 @@ public class QualityDamageTooltipsServerMod implements WurmMod, Initable
                         }
                     });
             // END - com.wurmonline.server.zones.VirtualZone.addCreature(long creatureId, boolean overRideRange):boolean
+
+            // Add a cleaning up the send queue to the server loop
+            // ---------------------------------------------------------
+
+            // com.wurmonline.server.Server.run()
+            classPool.getCtClass("com.wurmonline.server.Server").getMethod("run", "()V")
+                    .insertAfter("org.tmarchuk.wurmunlimited.server.tooltips.QualityDamageTooltipsServerHelper.cleanQueue();");
+            // END - com.wurmonline.server.Server.run()
         }
-        catch (NotFoundException e)
+        catch (NotFoundException | CannotCompileException e)
         {
             logException("Failed to create hooks for " + QualityDamageTooltipsServerMod.class.getName(), e);
             throw new HookException(e);
