@@ -1,8 +1,8 @@
 # Quality Damage Tooltips for Wurm Unlimited
 
 ## Requirements
-* Requires [Ago1024's client modloader](https://github.com/ago1024/WurmClientModLauncher/releases/latest) on the client.
-* Requires [Ago1024's server modloader](https://github.com/ago1024/WurmServerModLauncher/releases/latest) on the server.
+* Requires the newest version (0.4) of [Ago1024's client modloader](https://github.com/ago1024/WurmClientModLauncher/releases/latest) on the client.
+* Requires the newest version (0.19) of [Ago1024's server modloader](https://github.com/ago1024/WurmServerModLauncher/releases/latest) on the server.
 * Requires installation on both the client (to change the tooltip rendering) and on the server 
 (to send quality and damage updates without having to 'examine' the object.)
 
